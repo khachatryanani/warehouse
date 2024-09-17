@@ -16,10 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\Categories\" />
     <Folder Include="Commands\Configurations\" />
     <Folder Include="Commands\Orders\" />
-    <Folder Include="Queries\Categories\" />
     <Folder Include="Queries\Configurations\" />
     <Folder Include="Queries\Orders\" />
   </ItemGroup>
