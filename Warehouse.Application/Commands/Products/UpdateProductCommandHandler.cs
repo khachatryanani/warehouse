@@ -9,7 +9,7 @@ namespace Warehouse.Application.Commands.Products
         {
             var product = await productRepository.GetByIdAsync(request.Id, cancellationToken);
 
-            await productRepository.UpdateAsync(request.Product, cancellationToken);
+            await productRepository.UpdateAsync(request.Id, request.Product, cancellationToken);
         }
     }
 }
