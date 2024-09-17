@@ -10,9 +10,12 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
 {
     internal class ProductRepository(IOptions<MongoDbOptions> options, IMapper mapper) : BaseRepository<ProductDataModel>(options), IProductRepository
     {
-        public Task CreateAsync(Product data, CancellationToken cancellationToken = default)
+        public async Task CreateAsync(Product entity, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var dataModel = mapper.Map<ProductDataModel>(entity);
+            dataModel.CreateDate = DateTime.UtcNow;
+
+            await Collection.InsertOneAsync(dataModel, cancellationToken: cancellationToken);
         }
 
         public async Task<IEnumerable<Product>> GetAsync(CancellationToken cancellationToken = default)
@@ -39,9 +42,10 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
 
             var update = Builders<ProductDataModel>.Update.Set(x => x.Name, entity.Name)
                                                           .Set(x => x.CategoryId, entity.CategoryId)
-                                                          .Set(x => x.SockItemsCount, entity.SockItemsCount);
-
-           await Collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+                                                          .Set(x => x.SockItemsCount, entity.SockItemsCount)
+                                                          .Set(x => x.UpdateDate, DateTime.UtcNow);
+            
+            await Collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
         }
     }
 }

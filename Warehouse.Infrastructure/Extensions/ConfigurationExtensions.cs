@@ -16,6 +16,7 @@ namespace Warehouse.Infrastructure.Extensions
         private static IServiceCollection AddPersistence(this IServiceCollection services) 
         {
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             return services;
         }
