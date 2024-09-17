@@ -3,7 +3,7 @@ using Warehouse.Domain.Entities;
 
 namespace Warehouse.Application.Commands.Products
 {
-    public class UpdateProductCommand(Product product, int id) : IRequest
+    public class UpdateProductCommand(int id, Product product) : IRequest
     {
         public Product Product { get; init; } = product;
 

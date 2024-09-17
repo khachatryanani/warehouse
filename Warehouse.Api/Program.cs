@@ -1,17 +1,15 @@
 using Microsoft.AspNetCore.Hosting;
 using Warehouse.Infrastructure.Persistence.Options;
 using Warehouse.Infrastructure.Extensions;
+using Warehouse.Application.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddMediatR(options =>
-{
-    options.RegisterServicesFromAssemblies(typeof(Program).Assembly);
-});
+
 
 builder.Services.Configure<MongoDbOptions>(builder.Configuration.GetSection(MongoDbOptions.Section));
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

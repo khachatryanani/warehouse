@@ -8,6 +8,7 @@ namespace Warehouse.Infrastructure.Extensions
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(ConfigurationExtensions).Assembly);
             services.AddPersistence();
             
             return services;
