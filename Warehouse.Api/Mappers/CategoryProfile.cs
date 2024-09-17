@@ -5,9 +5,9 @@ using Warehouse.Domain.Entities;
 
 namespace Warehouse.Api.Mappers
 {
-    public class CategoryProfiles: Profile
+    public class CategoryProfile: Profile
     {
-        public CategoryProfiles()
+        public CategoryProfile()
         {
             CreateMap<CategoryRequestDto, Category>();
             CreateMap<Category, CategoryResponseDto>();

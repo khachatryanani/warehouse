@@ -31,8 +31,8 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
         public async Task<Order> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var filter = Builders<OrderDataModel>.Filter.Eq(dm => dm.Id, id);
-            var dataModel = (await Collection.FindAsync(filter, cancellationToken: cancellationToken))
-                                             .FirstOrDefaultAsync(cancellationToken);
+            var dataModel = await Collection.Find(filter)
+                                            .FirstOrDefaultAsync(cancellationToken);
 
             return mapper.Map<Order>(dataModel);
         }
@@ -41,7 +41,7 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
         {
             var filter = Builders<OrderDataModel>.Filter.Eq(dm => dm.UserId, userId);
             var dataModel = (await Collection.FindAsync(filter, cancellationToken: cancellationToken))
-                                             .FirstOrDefaultAsync(cancellationToken);
+                                             .ToEnumerable(cancellationToken: cancellationToken);
 
             return mapper.Map<IEnumerable<Order>>(dataModel);
         }
