@@ -38,8 +38,8 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
         public async Task<Category> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var filter = Builders<CategoryDataModel>.Filter.Eq(dm => dm.Id, id);
-            var dataModel = (await Collection.FindAsync(filter, cancellationToken: cancellationToken))
-                                             .FirstOrDefaultAsync(cancellationToken);
+            var dataModel = await Collection.Find(filter)
+                                            .FirstOrDefaultAsync(cancellationToken);
 
             return mapper.Map<Category>(dataModel);
         }
