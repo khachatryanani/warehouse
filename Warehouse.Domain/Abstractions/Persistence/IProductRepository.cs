@@ -6,6 +6,7 @@ namespace Warehouse.Domain.Abstractions
     {
         Task<IEnumerable<Product>> GetAsync(CancellationToken cancellationToken = default);
         Task<Product> GetByIdAsync(int id, CancellationToken cancellationToken = default);
-        Task UpdateAsync(Product data, CancellationToken cancellationToken = default);
+        Task CreateAsync(Product data, CancellationToken cancellationToken = default);
+        Task UpdateAsync(int id, Product data, CancellationToken cancellationToken = default);
     }
 }
