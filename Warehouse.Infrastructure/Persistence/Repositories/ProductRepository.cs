@@ -14,6 +14,7 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
         {
             var dataModel = mapper.Map<ProductDataModel>(entity);
             dataModel.CreateDate = DateTime.UtcNow;
+            dataModel.Id = GetNextSequenceValue();
 
             await Collection.InsertOneAsync(dataModel, cancellationToken: cancellationToken);
         }
@@ -30,8 +31,8 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
         public async Task<Product> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var filter = Builders<ProductDataModel>.Filter.Eq(dm => dm.Id, id);
-            var dataModel = (await Collection.FindAsync(filter, cancellationToken: cancellationToken))
-                                             .FirstOrDefaultAsync(cancellationToken);
+            var dataModel = await Collection.Find(filter)
+                                            .FirstOrDefaultAsync(cancellationToken);
 
             return mapper.Map<Product>(dataModel);
         }

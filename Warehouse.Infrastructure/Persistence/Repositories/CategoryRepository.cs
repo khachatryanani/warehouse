@@ -14,6 +14,7 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
         {
             var dataModel = mapper.Map<CategoryDataModel>(entity);
             dataModel.CreateDate = DateTime.UtcNow;
+            dataModel.Id = GetNextSequenceValue();
 
             await Collection.InsertOneAsync(dataModel, cancellationToken: cancellationToken);
         }
