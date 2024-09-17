@@ -15,9 +15,4 @@
     <ProjectReference Include="..\Warehouse.Domain\Warehouse.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Commands\Configurations\" />
-    <Folder Include="Queries\Configurations\" />
-  </ItemGroup>
-
 </Project>
