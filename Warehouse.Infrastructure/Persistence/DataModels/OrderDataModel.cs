@@ -1,4 +1,5 @@
-﻿using Warehouse.Infrastructure.Attributes;
+﻿using Warehouse.Domain.Enums;
+using Warehouse.Infrastructure.Attributes;
 
 namespace Warehouse.Infrastructure.Persistence.DataModels
 {
@@ -10,5 +11,6 @@ namespace Warehouse.Infrastructure.Persistence.DataModels
         public int UserId { get; set; }
         public int ProductId { get; set; }
         public int ItemsCount { get; set; }
+        public OrderStatus Status { get; set; }
     }
 }

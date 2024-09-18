@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using SharpCompress.Common;
 using Warehouse.Domain.Abstractions;
 using Warehouse.Domain.Entities;
+using Warehouse.Domain.Enums;
 using Warehouse.Infrastructure.Persistence.DataModels;
 using Warehouse.Infrastructure.Persistence.Options;
 
@@ -10,13 +12,14 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
 {
     internal class OrderRepository(IOptions<MongoDbOptions> options, IMapper mapper) : BaseRepository<OrderDataModel>(options), IOrderRepository
     {
-        public async Task CreateAsync(Order entity, CancellationToken cancellationToken = default)
+        public async Task<int> CreateAsync(Order entity, CancellationToken cancellationToken = default)
         {
             var dataModel = mapper.Map<OrderDataModel>(entity);
             dataModel.CreateDate = DateTime.UtcNow;
             dataModel.Id = GetNextSequenceValue();
 
             await Collection.InsertOneAsync(dataModel, cancellationToken: cancellationToken);
+            return dataModel.Id;
         }
 
         public async Task<IEnumerable<Order>> GetAsync(CancellationToken cancellationToken = default)
@@ -53,6 +56,17 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
             var update = Builders<OrderDataModel>.Update.Set(x => x.UserId, entity.UserId)
                                                         .Set(x => x.ProductId, entity.ProductId)
                                                         .Set(x => x.ItemsCount, entity.ItemsCount)
+                                                        .Set(x => x.Status, entity.Status)
+                                                        .Set(x => x.UpdateDate, DateTime.UtcNow);
+
+            await Collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+        }
+
+        public async Task UpdateStatusAsync(int id, OrderStatus status, CancellationToken cancellationToken = default)
+        {
+            var filter = Builders<OrderDataModel>.Filter.Eq(dm => dm.Id, id);
+
+            var update = Builders<OrderDataModel>.Update.Set(x => x.Status, status)
                                                         .Set(x => x.UpdateDate, DateTime.UtcNow);
 
             await Collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);

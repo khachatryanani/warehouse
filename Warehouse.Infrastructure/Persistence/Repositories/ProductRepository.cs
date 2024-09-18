@@ -10,13 +10,15 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
 {
     internal class ProductRepository(IOptions<MongoDbOptions> options, IMapper mapper) : BaseRepository<ProductDataModel>(options), IProductRepository
     {
-        public async Task CreateAsync(Product entity, CancellationToken cancellationToken = default)
+        public async Task<int> CreateAsync(Product entity, CancellationToken cancellationToken = default)
         {
             var dataModel = mapper.Map<ProductDataModel>(entity);
             dataModel.CreateDate = DateTime.UtcNow;
             dataModel.Id = GetNextSequenceValue();
 
             await Collection.InsertOneAsync(dataModel, cancellationToken: cancellationToken);
+
+            return dataModel.Id;
         }
 
         public async Task<bool> ExistByCategoryIdAsync(int categoryId, CancellationToken cancellationToken = default)
