@@ -16,7 +16,7 @@ namespace Warehouse.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateAsync([FromBody] OrderRequestDto request, CancellationToken cancellationToken)
         {
-            var command = new CreateOrderCommand(mapper.Map<Order>(request));
+            var command = new CreateOrderCommand(mapper.Map<Order>(request), request.ReserveMode);
             await sender.Send(command, cancellationToken: cancellationToken);
 
             return Ok();

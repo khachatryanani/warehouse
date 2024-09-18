@@ -88,11 +88,29 @@ namespace Warehouse.Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Product id is invalid..
+        /// </summary>
+        public static string InvalidProduct {
+            get {
+                return ResourceManager.GetString("InvalidProduct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid threshold units for category..
         /// </summary>
         public static string InvalidThresholds {
             get {
                 return ResourceManager.GetString("InvalidThresholds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Product with id {0} is out of stock..
+        /// </summary>
+        public static string ProductOutOfStock {
+            get {
+                return ResourceManager.GetString("ProductOutOfStock", resourceCulture);
             }
         }
     }

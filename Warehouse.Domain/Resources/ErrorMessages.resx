@@ -129,4 +129,10 @@
   <data name="InvalidOperation" xml:space="preserve">
     <value>Invalid operation : {0}</value>
   </data>
+  <data name="InvalidProduct" xml:space="preserve">
+    <value>Product id is invalid.</value>
+  </data>
+  <data name="ProductOutOfStock" xml:space="preserve">
+    <value>Product with id {0} is out of stock.</value>
+  </data>
 </root>
