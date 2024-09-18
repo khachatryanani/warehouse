@@ -19,6 +19,13 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
             await Collection.InsertOneAsync(dataModel, cancellationToken: cancellationToken);
         }
 
+        public async Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var filter = Builders<ProductDataModel>.Filter.Eq(dm => dm.Id, id);
+
+            return await Collection.Find(filter).AnyAsync(cancellationToken);
+        }
+
         public async Task<IEnumerable<Product>> GetAsync(CancellationToken cancellationToken = default)
         {
             var filter = Builders<ProductDataModel>.Filter.Empty;

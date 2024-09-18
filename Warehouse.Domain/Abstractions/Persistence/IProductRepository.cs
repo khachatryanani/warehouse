@@ -8,5 +8,6 @@ namespace Warehouse.Domain.Abstractions
         Task<Product> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task CreateAsync(Product entity, CancellationToken cancellationToken = default);
         Task UpdateAsync(int id, Product entity, CancellationToken cancellationToken = default);
+        Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default);
     }
 }

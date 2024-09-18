@@ -9,5 +9,6 @@ namespace Warehouse.Domain.Abstractions
         Task CreateAsync(Category entity, CancellationToken cancellationToken = default);
         Task UpdateAsync(int id, Category entity, CancellationToken cancellationToken = default);
         Task DeleteAsync(int id, CancellationToken cancellationToken = default);
+        Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default);
     }
 }
