@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using MassTransit;
+using MediatR;
+using Warehouse.Common.Contracts.Events;
 using Warehouse.Domain.Abstractions;
 using Warehouse.Domain.Abstractions.Services;
 using Warehouse.Domain.Enums;
@@ -7,7 +9,7 @@ using Warehouse.Domain.Resources;
 
 namespace Warehouse.Application.Commands.Orders
 {
-    public class CreateOrderCommandHandler(IOrderRepository orderRepository, IProductRepository productRepository, IStockService stockService) : IRequestHandler<CreateOrderCommand>
+    public class CreateOrderCommandHandler(IOrderRepository orderRepository, IProductRepository productRepository, IStockService stockService, IPublishEndpoint bus) : IRequestHandler<CreateOrderCommand>
     {
         public async Task Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
@@ -43,7 +45,7 @@ namespace Warehouse.Application.Commands.Orders
 
         private async Task HandleLowStockAsync(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-
+          await bus.Publish(new OrderCreatedEvent { CorrelationId = Guid.NewGuid(), OrderId = request.Order.Id }, cancellationToken: cancellationToken);
         }
 
         private async Task HandleOutOfStockAsync(CreateOrderCommand request, CancellationToken cancellationToken)
