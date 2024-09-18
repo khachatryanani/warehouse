@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
 using Warehouse.Infrastructure.Persistence.Options;
 using Warehouse.Infrastructure.Extensions;
 using Warehouse.Application.Extensions;
@@ -10,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<MongoDbOptions>(builder.Configuration.GetSection(MongoDbOptions.Section));
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
