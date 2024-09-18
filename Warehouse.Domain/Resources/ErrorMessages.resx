@@ -123,4 +123,10 @@
   <data name="DataNotFound" xml:space="preserve">
     <value>No data found for the specified id.</value>
   </data>
+  <data name="InvalidThresholds" xml:space="preserve">
+    <value>Invalid threshold units for category.</value>
+  </data>
+  <data name="InvalidOperation" xml:space="preserve">
+    <value>Invalid operation : {0}</value>
+  </data>
 </root>

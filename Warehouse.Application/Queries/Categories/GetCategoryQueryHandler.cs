@@ -1,5 +1,7 @@
 ﻿using MediatR;
 using Warehouse.Domain.Abstractions;
+using Warehouse.Domain.Exceptions;
+using Warehouse.Domain.Resources;
 
 namespace Warehouse.Application.Queries.Categories
 {
@@ -8,7 +10,9 @@ namespace Warehouse.Application.Queries.Categories
         public async Task<GetCategoryResponse> Handle(GetCategoryQuery request, CancellationToken cancellationToken)
         {
             var data = await categoryRepository.GetByIdAsync(request.Id, cancellationToken);
-            return new GetCategoryResponse(data);
+
+            return data is null ? throw new DataNotFoundException(ErrorMessages.DataNotFound)
+                                : new GetCategoryResponse(data);
         }
     }
 }
