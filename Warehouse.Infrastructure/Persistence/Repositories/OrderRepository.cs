@@ -58,19 +58,6 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
             return mapper.Map<IEnumerable<Order>>(dataModel);
         }
 
-        public async Task UpdateAsync(int id, Order entity, CancellationToken cancellationToken = default)
-        {
-            var filter = Builders<OrderDataModel>.Filter.Eq(dm => dm.Id, id);
-
-            var update = Builders<OrderDataModel>.Update.Set(x => x.UserId, entity.UserId)
-                                                        .Set(x => x.ProductId, entity.ProductId)
-                                                        .Set(x => x.ItemsCount, entity.ItemsCount)
-                                                        .Set(x => x.Status, entity.Status)
-                                                        .Set(x => x.UpdateDate, DateTime.UtcNow);
-
-            await Collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
-        }
-
         public async Task UpdateStatusAsync(int id, OrderStatus status, CancellationToken cancellationToken = default)
         {
             var filter = Builders<OrderDataModel>.Filter.Eq(dm => dm.Id, id);

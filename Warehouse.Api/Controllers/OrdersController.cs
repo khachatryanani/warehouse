@@ -50,16 +50,5 @@ namespace Warehouse.Api.Controllers
             var response = mapper.Map<OrderResponseDto>(queryResult.Order);
             return Ok(response);
         }
-
-
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdateAsync(int id, [FromBody] OrderRequestDto request, CancellationToken cancellationToken)
-        {
-            var command = new UpdateOrderCommand(id, mapper.Map<Order>(request));
-            await sender.Send(command, cancellationToken: cancellationToken);
-
-            return Ok();
-        }
-
     }
 }
