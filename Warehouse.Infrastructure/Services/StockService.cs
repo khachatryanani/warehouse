@@ -9,18 +9,20 @@ namespace Warehouse.Infrastructure.Services
 {
     internal class StockService(IProductRepository productRepository, ICategoryRepository categoryRepository, IPublishEndpoint publishEndpoint) : IStockService
     {
-        public async Task<StockState> GetStockStateByProductIdAsync(int productId, CancellationToken cancellationToken = default)
+        public async Task<StockState> GetStockStateByProductIdAsync(int productId, int requestedCount, CancellationToken cancellationToken = default)
         {
             var product = await productRepository.GetByIdAsync(productId, cancellationToken)
                                     ?? throw new InvalidOperationException(string.Format(ErrorMessages.InvalidOperation, "Product is unavailable."));
 
             var category = await categoryRepository.GetByIdAsync(product.CategoryId, cancellationToken)
                                     ?? throw new InvalidOperationException(string.Format(ErrorMessages.InvalidOperation, "Category is unavailable."));
-            if (product.SockItemsCount <= category.OutOfStockThreshold)
+
+            var remainingStock = product.SockItemsCount - requestedCount;
+            if (remainingStock <= category.OutOfStockThreshold)
             {
                 return StockState.OutOfStock;
             }
-            else if (product.SockItemsCount <= category.LowStockThreshold)
+            else if (remainingStock <= category.LowStockThreshold)
             {
                 return StockState.LowStock;
             }
@@ -41,7 +43,7 @@ namespace Warehouse.Infrastructure.Services
             }
 
             product.SockItemsCount -= count;
-            await productRepository.UpdateAsync(productId, product, cancellationToken);
+            await productRepository.UpdateStockItemsCountAsync(productId, product.SockItemsCount, cancellationToken);
 
             await NotifyStockChangedAsync(productId, product.SockItemsCount, cancellationToken);
 
@@ -54,8 +56,8 @@ namespace Warehouse.Infrastructure.Services
                                     ?? throw new InvalidOperationException(string.Format(ErrorMessages.InvalidOperation, "Product is unavailable."));
 
             product.SockItemsCount += count;
-            await productRepository.UpdateAsync(productId, product, cancellationToken);
-            
+            await productRepository.UpdateStockItemsCountAsync(productId, product.SockItemsCount, cancellationToken);
+
             await NotifyStockChangedAsync(productId, product.SockItemsCount, cancellationToken);
 
             return product.SockItemsCount;

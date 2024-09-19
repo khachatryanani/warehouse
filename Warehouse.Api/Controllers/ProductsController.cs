@@ -50,7 +50,7 @@ namespace Warehouse.Api.Controllers
             return Ok();
         }
 
-        [HttpPatch("{id:int}")]
+        [HttpPatch]
         public async Task<ActionResult> UpdateStockItemsCountAsync(UpdateProductStockItemsCountRequestDto request, CancellationToken cancellationToken)
         {
             var command = new UpdateProductStockItemsCountCommand(request.Id, request.StockItemsCount);

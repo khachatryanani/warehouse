@@ -71,7 +71,7 @@ namespace Warehouse.Infrastructure.Extensions
                 x.AddSagaStateMachine<OrderSubmittedFlow, OrderState>()
                 .MongoDbRepository(mongoDbOptions.ConnectionString, x =>
                 {
-                    x.CollectionName = "OrderSubmittedFlow";
+                    x.CollectionName = "order-submitted-flow";
                     x.DatabaseName = mongoDbOptions.DatabaseName;
                 });
             });

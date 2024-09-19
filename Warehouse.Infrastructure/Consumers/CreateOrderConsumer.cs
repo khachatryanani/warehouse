@@ -13,7 +13,7 @@ namespace Warehouse.Infrastructure.Consumers
         public async Task Consume(ConsumeContext<OrderCreatedEvent> context)
         {
             var order = await orderRepository.GetByIdAsync(context.Message.OrderId, context.CancellationToken);
-            var stockState = await stockService.GetStockStateByProductIdAsync(order.ProductId, context.CancellationToken);
+            var stockState = await stockService.GetStockStateByProductIdAsync(order.ProductId, order.ItemsCount, context.CancellationToken);
 
             var OrderCreatedResponse = stockState switch
             {

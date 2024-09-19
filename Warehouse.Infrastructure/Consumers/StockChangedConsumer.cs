@@ -16,7 +16,7 @@ namespace Warehouse.Infrastructure.Consumers
                 return;
             }
 
-            await publishEndpoint.Publish<OrderCreatedEventResponse>(new OrderCreatedEvent()
+            await publishEndpoint.Publish(new OrderCreatedEvent()
             {
                 CorrelationId = Guid.NewGuid(),
                 OrderId = order.Id,
