@@ -4,7 +4,7 @@ using Warehouse.Domain.Abstractions.Services;
 using Warehouse.Domain.Enums;
 using Warehouse.Domain.Events;
 using Warehouse.Domain.Resources;
-
+using InvalidOperationException = Warehouse.Domain.Exceptions.InvalidOperationException;
 namespace Warehouse.Infrastructure.Services
 {
     internal class StockService(IProductRepository productRepository, ICategoryRepository categoryRepository, IPublishEndpoint publishEndpoint) : IStockService
