@@ -1,15 +1,17 @@
-﻿using Warehouse.Domain.Abstractions;
+﻿using MassTransit;
+using Warehouse.Domain.Abstractions;
 using Warehouse.Domain.Abstractions.Services;
 using Warehouse.Domain.Enums;
+using Warehouse.Domain.Events;
 using Warehouse.Domain.Resources;
 
 namespace Warehouse.Infrastructure.Services
 {
-    internal class StockService(IProductRepository productRepository, ICategoryRepository categoryRepository): IStockService
+    internal class StockService(IProductRepository productRepository, ICategoryRepository categoryRepository, IPublishEndpoint publishEndpoint) : IStockService
     {
-        public async Task<StockState> GetStockStateByProductIdAsync(int productId, CancellationToken cancellationToken = default) 
+        public async Task<StockState> GetStockStateByProductIdAsync(int productId, CancellationToken cancellationToken = default)
         {
-            var product  = await productRepository.GetByIdAsync(productId, cancellationToken)
+            var product = await productRepository.GetByIdAsync(productId, cancellationToken)
                                     ?? throw new InvalidOperationException(string.Format(ErrorMessages.InvalidOperation, "Product is unavailable."));
 
             var category = await categoryRepository.GetByIdAsync(product.CategoryId, cancellationToken)
@@ -22,7 +24,7 @@ namespace Warehouse.Infrastructure.Services
             {
                 return StockState.LowStock;
             }
-            else 
+            else
             {
                 return StockState.Available;
             }
@@ -33,13 +35,15 @@ namespace Warehouse.Infrastructure.Services
             var product = await productRepository.GetByIdAsync(productId, cancellationToken)
                                     ?? throw new InvalidOperationException(string.Format(ErrorMessages.InvalidOperation, "Product is unavailable."));
 
-            if (count > product.SockItemsCount) 
+            if (count > product.SockItemsCount)
             {
-               throw new InvalidOperationException(string.Format(ErrorMessages.InvalidOperation, "Insufficient number of stock items."));
+                throw new InvalidOperationException(string.Format(ErrorMessages.InvalidOperation, "Insufficient number of stock items."));
             }
 
             product.SockItemsCount -= count;
             await productRepository.UpdateAsync(productId, product, cancellationToken);
+
+            await NotifyStockChangedAsync(productId, product.SockItemsCount, cancellationToken);
 
             return product.SockItemsCount;
         }
@@ -51,8 +55,24 @@ namespace Warehouse.Infrastructure.Services
 
             product.SockItemsCount += count;
             await productRepository.UpdateAsync(productId, product, cancellationToken);
+            
+            await NotifyStockChangedAsync(productId, product.SockItemsCount, cancellationToken);
 
             return product.SockItemsCount;
         }
+
+        public async Task UpdateStockItemsByProductIdAsync(int productId, int stockItemsCount, CancellationToken cancellationToken = default)
+        {
+            await productRepository.UpdateStockItemsCountAsync(productId, stockItemsCount, cancellationToken);
+            await NotifyStockChangedAsync(productId, stockItemsCount, cancellationToken);
+        }
+
+        private Task NotifyStockChangedAsync(int productId, int stockItemsCount, CancellationToken cancellationToken)
+        => publishEndpoint.Publish(new StockChangedEvent
+        {
+            ProductId = productId,
+            StockItemsCount = stockItemsCount,
+        }, cancellationToken);
+
     }
 }

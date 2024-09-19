@@ -8,7 +8,7 @@ using Warehouse.Domain.Resources;
 
 namespace Warehouse.Infrastructure.Consumers
 {
-    public class CreateOrderConsumer(IOrderRepository orderRepository, IStockService stockService, IPublishEndpoint bus) : IConsumer<OrderCreatedEvent>
+    public class CreateOrderConsumer(IOrderRepository orderRepository, IStockService stockService, IPublishEndpoint publishEndpoint) : IConsumer<OrderCreatedEvent>
     {
         public async Task Consume(ConsumeContext<OrderCreatedEvent> context)
         {
@@ -40,8 +40,10 @@ namespace Warehouse.Infrastructure.Consumers
 
         private async Task<OrderCreatedEventResponse> HandleLowStockAsync(Order order, CancellationToken cancellationToken)
         {
+            await stockService.TakeStockItemsByProductIdAsync(order.ProductId, order.ItemsCount, cancellationToken);
             await orderRepository.UpdateStatusAsync(order.Id, OrderStatus.UnderReview, cancellationToken);
-            await bus.Publish(new OrderSubmittedForReviewEvent { CorrelationId = Guid.NewGuid(), OrderId = order.Id }, cancellationToken: cancellationToken);
+
+            await publishEndpoint.Publish(new OrderSubmittedForReviewEvent { CorrelationId = Guid.NewGuid(), OrderId = order.Id }, cancellationToken: cancellationToken);
 
             return new OrderCreatedEventResponse
             {
@@ -52,7 +54,14 @@ namespace Warehouse.Infrastructure.Consumers
 
         private async Task<OrderCreatedEventResponse> HandleOutOfStockAsync(Order order, ReserveMode mode, CancellationToken cancellationToken)
         {
-            if (mode is ReserveMode.None)
+            return mode switch
+            {
+                ReserveMode.None => await RejectOrderAsync(order, cancellationToken),
+                ReserveMode.ReserveWhenAvailable => await WaitListOrderAsync(order, cancellationToken),
+                _ => throw new NotImplementedException(),
+            };
+
+            async Task<OrderCreatedEventResponse> RejectOrderAsync(Order order, CancellationToken cancellationToken)
             {
                 await orderRepository.UpdateStatusAsync(order.Id, OrderStatus.Rejected, cancellationToken);
                 return new OrderCreatedEventResponse
@@ -63,11 +72,15 @@ namespace Warehouse.Infrastructure.Consumers
                 };
             }
 
-            return new OrderCreatedEventResponse
+            async Task<OrderCreatedEventResponse> WaitListOrderAsync(Order order, CancellationToken cancellationToken)
             {
-                OrderId = order.Id,
-                Status = OrderStatus.Pending
-            };
+                await orderRepository.UpdateStatusAsync(order.Id, OrderStatus.Pending, cancellationToken);
+                return new OrderCreatedEventResponse
+                {
+                    OrderId = order.Id,
+                    Status = OrderStatus.Pending
+                };
+            }
         }
     }
 }

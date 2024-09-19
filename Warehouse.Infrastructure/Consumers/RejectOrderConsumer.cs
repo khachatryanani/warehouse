@@ -12,8 +12,8 @@ namespace Warehouse.Infrastructure.Consumers
         {
             var order = await orderRepository.GetByIdAsync(context.Message.OrderId, context.CancellationToken);
 
-            await stockService.TakeStockItemsByProductIdAsync(order.ProductId, order.ItemsCount, context.CancellationToken);
-            await orderRepository.UpdateStatusAsync(order.Id, OrderStatus.Approved, context.CancellationToken);
+            await stockService.AddStockItemsByProductIdAsync(order.ProductId, order.ItemsCount, context.CancellationToken);
+            await orderRepository.UpdateStatusAsync(order.Id, OrderStatus.Rejected, context.CancellationToken);
         }
     }
 }
