@@ -5,6 +5,7 @@ using FluentValidation.AspNetCore;
 using FluentValidation;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using System.Reflection;
+using Warehouse.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +28,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

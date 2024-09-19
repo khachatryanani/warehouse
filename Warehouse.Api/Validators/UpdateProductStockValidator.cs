@@ -3,7 +3,7 @@ using Warehouse.Api.Models.RequestDtos;
 
 namespace Warehouse.Api.Validators
 {
-    public class UpdateProductStockValidator : AbstractValidator<UpdateProductStockItemsCountRequestDto>
+    public class UpdateProductStockValidator : CustomeAbstractValidator<UpdateProductStockItemsCountRequestDto>
     {
         public UpdateProductStockValidator()
         {

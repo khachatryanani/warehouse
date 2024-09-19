@@ -3,7 +3,7 @@ using Warehouse.Api.Models.RequestDtos;
 
 namespace Warehouse.Api.Validators
 {
-    public class CreateOrderValidator : AbstractValidator<OrderRequestDto>
+    public class CreateOrderValidator : CustomeAbstractValidator<OrderRequestDto>
     {
         public CreateOrderValidator()
         {

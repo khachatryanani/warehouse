@@ -3,7 +3,7 @@ using Warehouse.Api.Models.RequestDtos;
 
 namespace Warehouse.Api.Validators
 {
-    public class CreateCategoryValidator : AbstractValidator<CategoryRequestDto>
+    public class CreateCategoryValidator : CustomeAbstractValidator<CategoryRequestDto>
     {
         public CreateCategoryValidator()
         {

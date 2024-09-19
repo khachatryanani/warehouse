@@ -135,4 +135,10 @@
   <data name="ProductOutOfStock" xml:space="preserve">
     <value>Product with id {0} is out of stock.</value>
   </data>
+  <data name="SomethingWentWrong" xml:space="preserve">
+    <value>Something went wrong!</value>
+  </data>
+  <data name="ValidationError" xml:space="preserve">
+    <value>Validation error occured.</value>
+  </data>
 </root>

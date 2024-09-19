@@ -26,7 +26,7 @@ namespace Warehouse.Application.Commands.Categories
 
         private async Task ValidateCanBeDeleted(int categoryId, CancellationToken cancellationToken)
         {
-            if (!await productRepository.ExistByCategoryIdAsync(categoryId, cancellationToken))
+            if (await productRepository.ExistByCategoryIdAsync(categoryId, cancellationToken))
             {
                 throw new InvalidOperationException(string.Format(ErrorMessages.InvalidOperation, "This Category cannot be deleted,"));
             }
