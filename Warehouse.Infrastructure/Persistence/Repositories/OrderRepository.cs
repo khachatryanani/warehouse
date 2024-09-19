@@ -40,6 +40,15 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
             return mapper.Map<Order>(dataModel);
         }
 
+        public async Task<IEnumerable<Order>> GetByProductIdAsync(int productId, CancellationToken cancellationToken = default)
+        {
+            var filter = Builders<OrderDataModel>.Filter.Eq(dm => dm.ProductId, productId);
+            var dataModel = (await Collection.FindAsync(filter, cancellationToken: cancellationToken))
+                                             .ToEnumerable(cancellationToken: cancellationToken);
+
+            return mapper.Map<IEnumerable<Order>>(dataModel);
+        }
+
         public async Task<IEnumerable<Order>> GetByUserIdAsync(int userId, CancellationToken cancellationToken = default)
         {
             var filter = Builders<OrderDataModel>.Filter.Eq(dm => dm.UserId, userId);

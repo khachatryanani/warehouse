@@ -1,6 +1,7 @@
 ﻿using MassTransit;
 using Warehouse.Common.Contracts.Events;
 using Warehouse.Common.Contracts.Messages;
+using Warehouse.Domain.Events;
 
 namespace Warehouse.Infrastructure.Consumers.Sagas
 {
@@ -8,7 +9,7 @@ namespace Warehouse.Infrastructure.Consumers.Sagas
     {
         public State PendingApproval { get; set; }
 
-        public Event<OrderCreatedEvent> Created { get; set; }
+        public Event<OrderSubmittedForReviewEvent> SubmittedForReview { get; set; }
         public Event<OrderApprovedEvent> Approved { get; set; }
         public Event<OrderRejectedEvent> Rejected { get; set; }
 
@@ -16,12 +17,12 @@ namespace Warehouse.Infrastructure.Consumers.Sagas
         {
             InstanceState(x => x.CurrentState);
 
-            Event(() => Created, x => x.CorrelateById(x => x.Message.CorrelationId));
+            Event(() => SubmittedForReview, x => x.CorrelateById(x => x.Message.CorrelationId));
             Event(() => Approved, x => x.CorrelateById(x => x.Message.CorrelationId));
             Event(() => Rejected, x => x.CorrelateById(x => x.Message.CorrelationId));
 
             Initially(
-                When(Created)
+                When(SubmittedForReview)
                 .Publish(c => new ReviewOrderRequest()
                 {
                     CorrelationId = c.Message.CorrelationId,
