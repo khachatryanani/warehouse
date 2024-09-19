@@ -10,6 +10,7 @@ namespace Warehouse.Api.Mappers
         public ProductProfile()
         {
             CreateMap<ProductRequestDto, Product>();
+            CreateMap<CreateProductRequestDto, Product>();
             CreateMap<Product, ProductResponseDto>();
         }
     }
