@@ -12,7 +12,7 @@ namespace Warehouse.Api.Controllers
     public class ProductsController(IMapper mapper, IMediator sender) : BaseController
     {
         [HttpPost]
-        public async Task<ActionResult> CreateAsync([FromBody] ProductRequestDto request, CancellationToken cancellationToken)
+        public async Task<ActionResult> CreateAsync([FromBody] CreateProductRequestDto request, CancellationToken cancellationToken)
         {
             var command = new CreateProductCommand(mapper.Map<Product>(request));
             await sender.Send(command, cancellationToken: cancellationToken);
@@ -45,6 +45,15 @@ namespace Warehouse.Api.Controllers
         public async Task<ActionResult> UpdateAsync(int id,[FromBody] ProductRequestDto request, CancellationToken cancellationToken)
         {
             var command = new UpdateProductCommand(id, mapper.Map<Product>(request));
+            await sender.Send(command, cancellationToken: cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPatch("{id:int}")]
+        public async Task<ActionResult> UpdateStockItemsCountAsync(UpdateProductStockItemsCountRequestDto request, CancellationToken cancellationToken)
+        {
+            var command = new UpdateProductStockItemsCountCommand(request.Id, request.StockItemsCount);
             await sender.Send(command, cancellationToken: cancellationToken);
 
             return Ok();

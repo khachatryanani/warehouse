@@ -59,9 +59,18 @@ namespace Warehouse.Infrastructure.Persistence.Repositories
 
             var update = Builders<ProductDataModel>.Update.Set(x => x.Name, entity.Name)
                                                           .Set(x => x.CategoryId, entity.CategoryId)
-                                                          .Set(x => x.SockItemsCount, entity.SockItemsCount)
                                                           .Set(x => x.UpdateDate, DateTime.UtcNow);
             
+            await Collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+        }
+
+        public async Task UpdateStockItemsCountAsync(int id, int stockItems, CancellationToken cancellationToken = default)
+        {
+            var filter = Builders<ProductDataModel>.Filter.Eq(dm => dm.Id, id);
+
+            var update = Builders<ProductDataModel>.Update.Set(x => x.SockItemsCount, stockItems)
+                                                          .Set(x => x.UpdateDate, DateTime.UtcNow);
+
             await Collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
         }
     }
