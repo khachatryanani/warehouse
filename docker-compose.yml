@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+    rabbitmq:
+        image: rabbitmq:3-management-alpine
+        container_name: warehouse-rabbitmq
+        environment:
+            RABBITMQ_DEFAULT_USER: root
+            RABBITMQ_DEFAULT_PASS: example
+        ports:
+            - 5672:5672
+            - 15672:15672
+        volumes:
+            - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+            - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+        networks:
+            - rabbitmq_go_net
+
+
+    mongodb_container:
+        image: mongo
+        container_name: warehouse-mongodb
+        restart: always
+        ports:
+            - 27017:27017
+        volumes:
+            - mongodb_data_container:/data/db
+    
+    order-review-service:
+        image: order-review-service:latest
+        container_name: warehouse-order-review-service
+        ports:
+            - 8080:8081
+        restart: on-failure
+        depends_on:
+            - rabbitmq
+        networks:
+            - rabbitmq_go_net
+        
+volumes:
+  mongodb_data_container:   
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge
